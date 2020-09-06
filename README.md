@@ -1,7 +1,7 @@
 # Netlock
 Monitor traffic and disable hardware when a treshhold is reached.
 
- OPTIONS
+OPTIONS
   -v version: display version info
   -h help: display help
   -t test connection: test if connected to the internet
