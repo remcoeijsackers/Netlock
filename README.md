@@ -1,7 +1,7 @@
 # Netlock
 Monitor traffic and disable hardware when a treshhold is reached.
 
-> Usage
+## Options
 - -v version: display version info
 - -h help: display help
 - -t test connection: test if connected to the internet
@@ -16,3 +16,19 @@ Monitor traffic and disable hardware when a treshhold is reached.
 - -c clean output: get clean output from an interface
   - Arg1: Interface ('en0')
   - Arg2: in or outgoing traffic ('in' 'out')
+
+---
+## Example 
+
+```bash
+#Monitor without limits
+netlock -m en0 0 0
+
+#Monitor, disable hardware when limit is reached
+netlock -m en0 5 5
+
+#Monitor, clean output
+netlock -c en0 out
+```
+
+---
