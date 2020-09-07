@@ -5,11 +5,11 @@
 # ------------------------------------------------------------------
 VERSION=0.1
 # --- Includes          --------------------------------------------
-source lib/info.sh
-source lib/util.sh
-source lib/hwblock.sh
-source lib/config.sh
-source lib/monitor.sh
+source src/info.sh
+source src/util.sh
+source src/hwblock.sh
+source src/config.sh
+source src/monitor.sh
 # --- Option processing --------------------------------------------
 if [ $# == 0 ] ; then
     USAGE

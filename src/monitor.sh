@@ -1,7 +1,7 @@
 #!/bin/bash
 # monitor the total network usage
-source lib/util.sh 
-source lib/hwblock.sh
+source src/util.sh 
+source src/hwblock.sh
 monitor() {
   #Current usage, interface is the first argument
   echo "interface: $1, limit_in: $3, limit_out: $2"
