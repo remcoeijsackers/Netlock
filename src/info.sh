@@ -19,8 +19,8 @@ HELP() {
   -s open new shell with internet access
   -m monitor traffic
     Arg1: Interface
-    Arg2: Bytes Out limit, 0 if no limit (Interface will be disabled if limit is reached)
-    Arg3: Bytes In limit, 0 if no limit (Interface will be disabled if limit is reached)
+    Arg2: Bytes In limit, 0 if no limit (Interface will be disabled if limit is reached)
+    Arg3: Bytes Out limit, 0 if no limit (Interface will be disabled if limit is reached)
   -c clean output: get clean output from an interface
     Arg1: Interface ('en0')
     Arg2: in or outgoing traffic ('in' 'out')
@@ -66,7 +66,8 @@ USAGE() {
 HEADER() {
   echo "
 ================================================================
- Netlock Monitor $1 $2
+ Netlock Monitor. 
+ Monitoring interface: $1 $2
 ================================================================
 "
 }

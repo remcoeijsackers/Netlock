@@ -1,15 +1,17 @@
-#!/bin/bash
+#!/bin/sh
 # monitor the total network usage
 source src/util.sh 
 source src/hwblock.sh
 monitor() {
   #Current usage, interface is the first argument
-  echo "interface: $1, limit_in: $3, limit_out: $2"
+  echo "limit_in: $2, limit_out: $3"
+  echo "================================================================"
   sleep 1
   current_bytes_out=$(netstat -ib | grep -e "$1" -m 1 | awk '{print $10}')
   cb_out=$(($current_bytes_out))
   current_bytes_in=$(netstat -ib | grep -e "$1" -m 1 | awk '{print $7}')
   cb_in=$(($current_bytes_in))
+  sleep 1
   while true
   do
     #outgoing traffic
@@ -18,13 +20,16 @@ monitor() {
     total_bytes_out="$(($nb_out-$cb_out))"
     kilo_bytes_out="$(($total_bytes_out/1000))"
     mon_out=$(printf %.3f "$total_bytes_out"e-3)
-    #incomming traffic
+
+    #incoming traffic
     new_bytes_in=$(netstat -ib | grep -e "$1" -m 1 | awk '{print $7}')
     nb_in=$((new_bytes_in))
     total_bytes_in="$(($nb_in-$cb_in))"
     kilo_bytes_in="$(($total_bytes_in/1000))"
     mon_in=$(printf %.3f "$total_bytes_in"e-3)
+
     overwrite "B OUT:" $mon_out "B IN:" $mon_in
+
     #traffic limits in the arguments
     limit_out=$2
     limit_in=$3
@@ -36,15 +41,15 @@ monitor() {
             ifconfig $1 down 
             break
         fi
-        break
+        #break
     elif (( $limit_out > 0 )); then
         if (( $kilo_bytes_out > $limit_out )); then
             echo "Limit traffic reached. hardware $1 disabled. enable it again with -d flag"
-            echo "Usage: $mon_out B - IN: $mon_in B"
+            echo "Usage: OUT $mon_out B - IN: $mon_in B"
             ifconfig $1 down 
             break
         fi
-        break
+        #break
     elif (( $limit_in > 0 )); then 
         if (( $kilo_bytes_in > $limit_in )); then 
             echo "Limit incoming traffic reached. hardware $1 disabled. enable it again with -d flag"
@@ -52,8 +57,9 @@ monitor() {
             ifconfig $1 down 
             break
         fi
-        break
+        #break
     fi
+
   done
   exit 0
 }
@@ -117,11 +123,13 @@ usage_test() { # 1: interface
     nb_in=$((new_bytes_in))
     total_bytes_in="$(($nb_in-$cb_in))"
     kilo_bytes_in="$(($total_bytes_in/1000))"
+
     mon_in=$(printf %.3f "$total_bytes_in"e-3)
     limit_test=$((1/100000))
-    echo "KB In" $kilo_bytes_out "KB Out" $kilo_bytes_in
-    sleep 4
-    if (( "$kilo_bytes_out" > "$limit_test" || "$kilo_bytes_in" > "$limit_test")); then
+
+    overwrite "bytes In" $mon_in " bytes Out" $mon_out
+    sleep 10
+    if (( "$nb_out" > "$limit_test" || "$nb_in" > "$limit_test")); then
         echo "Interface has Traffic"
         break
     elif (( "$kilo_bytes_out" > "$limit_test" && "$kilo_bytes_in" > "$limit_test")); then

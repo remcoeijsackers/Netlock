@@ -56,8 +56,8 @@ while getopts "vhtndsm:c:" optname
         exit 0;
         ;;
       "m")
-        HEADER $OPTARG 
-        monitor $OPTARG $OPTARG $OPTARG
+        HEADER $2
+        monitor $2 $3 $4
         exit 0;
         ;;
       "c")
