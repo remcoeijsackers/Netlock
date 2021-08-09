@@ -1,7 +1,7 @@
 #!/bin/sh
 # monitor the total network usage
-source src/util.sh 
-source src/hwblock.sh
+source netlock/src/util.sh 
+source netlock/src/hwblock.sh
 monitor() {
   #Current usage, interface is the first argument
   echo "limit_in: $2, limit_out: $3"

@@ -1,15 +1,15 @@
 #!/bin/bash
 # ------------------------------------------------------------------
-# [ImmortalsOnly] Netlock
+# [Remco Eijsackers] Netlock
 #          Monitor traffic and disable hardware when a treshhold is reached.
 # ------------------------------------------------------------------
 VERSION=0.1
 # --- Includes          --------------------------------------------
-source src/info.sh
-source src/util.sh
-source src/hwblock.sh
-source src/config.sh
-source src/monitor.sh
+source netlock/src/info.sh
+source netlock/src/util.sh
+source netlock/src/hwblock.sh
+source netlock/src/config.sh
+source netlock/src/monitor.sh
 # --- Option processing --------------------------------------------
 if [ $# == 0 ] ; then
     USAGE
