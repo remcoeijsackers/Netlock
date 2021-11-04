@@ -3,12 +3,8 @@ restart_default=false
 script_dir='/usr/local/bin'
 default_editor='vim'
 package='netlock'
-
-red=`tput setaf 1`
-cyan=`tput setaf 6`
-green=`tput setaf 2`
-reset=`tput sgr0`
-
+dirname=${PWD##*/}
+documentationurl='https://github.com/remcoeijsackers/Netlock'
 usedshell=$(ps -p $$ -ocomm=)
 filename=`basename "$0"`
 exp_file="netlock.sh"
@@ -28,26 +24,33 @@ make_global() {
 	then
 		#rename script for find function
 		new_scriptname="$package"
+		script_container="$dirname"
 		#move scripts to bin
 		cp -R $PWD/* $script_dir/
-		chmod +x $script_dir/$package/"${new_scriptname}.sh"
+		chmod +x $script_dir/${script_container}/"${new_scriptname}.sh"
 		# add alias for script
-		echo "alias $package='$package/${new_scriptname}.sh'" >> ~/.zshrc
+		echo "alias $package='${script_container}/${new_scriptname}.sh'" >> ~/.zshrc
 	elif  [ $usedshell = "/bin/bash" ] || [ $usedshell = "bash" ]
 	then
 		#rename script for find function
 		new_scriptname="$package"
+		script_container="$dirname"
 		#move scripts to bin
 		cp -R $PWD/* $script_dir/
-		chmod +x $script_dir/$package/"${new_scriptname}.sh"
+		chmod +x $script_dir/${script_container}/"${new_scriptname}.sh"
 		# add alias for script
-		echo "alias $package='$package/${new_scriptname}.sh'" >> ~/.bashrc
+		echo "alias $package='${script_container}/${new_scriptname}.sh'" >> ~/.bashrc
 	else 
 		_list_rc
 	fi
 }
 
 restart_shell() {
+	echo ""
+	echo "Package $package initialised. for shell: $usedshell."
+	echo "Use '$package -h' to get more info."
+	echo "Or read the documentation at: $documentationurl"
+	echo $'Restarting shell. \n'
 	if  [ $usedshell = "/bin/zsh" ] || [ $usedshell = "sh" ] || [ $usedshell = "zsh" ] || [ $usedshell = "/bin/sh" ]
 	then
 		exec zsh
