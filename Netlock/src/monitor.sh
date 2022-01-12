@@ -78,7 +78,7 @@ monitorclean() {
         total_bytes_out="$(($nb_out-$cb_out))"
         kilo_bytes_out="$(($total_bytes_out/1000))"
         mon_out=$(printf %.3f "$total_bytes_out"e-3)
-        #incomming traffic
+        #incoming traffic
         new_bytes_in=$(netstat -ib | grep -e "$1" -m 1 | awk '{print $7}')
         nb_in=$((new_bytes_in))
         total_bytes_in="$(($nb_in-$cb_in))"
