@@ -2,8 +2,10 @@
 Monitor network traffic and disable hardware when a threshhold in bytes is reached.
 
 ## Installation
+
+in the repo root run;
 ```bash
-./setup.sh
+sudo ./Netlock/setup.sh
 ```
 **Note:** if you experience issues after installation, please restart the shell (or open a new one)
 
