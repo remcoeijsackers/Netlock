@@ -8,6 +8,7 @@ documentationurl='https://github.com/remcoeijsackers/Netlock'
 usedshell=$(ps -p $$ -ocomm=)
 filename=`basename "$0"`
 exp_file="netlock.sh"
+source netlock/src/checks.sh 
 
 # -e needed for bash colour output
 if [ $usedshell = "/bin/zsh" ] || [ $usedshell = "sh" ] || [ $usedshell = "zsh" ] || [ $usedshell = "/bin/sh" ]
@@ -18,26 +19,38 @@ else
 	read_assist="-p"
 fi
 
+check_install_status() {
+	if  ! command -v netlock; then
+		echo "Netlock is installed, uninstall?"
+	fi
+		printf "install now? y/n"
+		read answer
+		if [ $answer = 'y' ]
+			then
+				uninstall_netlock
+			else
+				echo 'Stopping Netlock uninstall.'
+				exit 0
+		fi
+	fi
+}
+
+uninstall_netlock () {
+	rmdir --ignore-fail-on-non-empty $script_dir/${script_container}
+}
+
 #make a script globally exc
 make_global() {
+	new_scriptname="$package"
+	script_container="$dirname"
+	cp -R $PWD/* $script_dir/
+	chmod +x $script_dir/${script_container}/"${new_scriptname}.sh"
 	if  [ $usedshell = "/bin/zsh" ] || [ $usedshell = "sh" ] || [ $usedshell = "zsh" ] || [ $usedshell = "/bin/sh" ]
 	then
-		#rename script for find function
-		new_scriptname="$package"
-		script_container="$dirname"
-		#move scripts to bin
-		cp -R $PWD/* $script_dir/
-		chmod +x $script_dir/${script_container}/"${new_scriptname}.sh"
 		# add alias for script
 		echo "alias $package='${script_container}/${new_scriptname}.sh'" >> ~/.zshrc
 	elif  [ $usedshell = "/bin/bash" ] || [ $usedshell = "bash" ]
 	then
-		#rename script for find function
-		new_scriptname="$package"
-		script_container="$dirname"
-		#move scripts to bin
-		cp -R $PWD/* $script_dir/
-		chmod +x $script_dir/${script_container}/"${new_scriptname}.sh"
 		# add alias for script
 		echo "alias $package='${script_container}/${new_scriptname}.sh'" >> ~/.bashrc
 	else 
@@ -69,10 +82,12 @@ _list_rc () {
 		exit 1
 }
 
-_setup_package () {
+setup_package () {
+	check_install_status
+	check_tools_availability
     make_global
 	restart_shell
 }
 
-_setup_package
+setup_package
 

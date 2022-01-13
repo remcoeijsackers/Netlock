@@ -33,7 +33,7 @@ HELP() {
 
 ================================================================
 - IMPLEMENTATION
--    version         Netlock 0.1.0
+-    version         Netlock 0.1.1
 -    author          Remco E
 -    license         GNU General Public License
 ================================================================ 
@@ -66,8 +66,9 @@ USAGE() {
 HEADER() {
   echo "
 ================================================================
- Netlock Monitor. 
- Monitoring interface: $1 $2
-================================================================
-"
+|| Netlock Monitor.                                           ||
+|| Started at: $(date)
+|| Monitoring interface: $1     
+|| Mode: $2                           
+================================================================"
 }

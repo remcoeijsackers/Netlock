@@ -4,8 +4,9 @@ source netlock/src/util.sh
 source netlock/src/hwblock.sh
 monitor() {
   #Current usage, interface is the first argument
-  echo "limit_in: $2, limit_out: $3"
+  echo "|| limit_in: $2               || limit_out: $3                  ||"
   echo "================================================================"
+  echo ""
   sleep 1
   current_bytes_out=$(netstat -ib | grep -e "$1" -m 1 | awk '{print $10}')
   cb_out=$(($current_bytes_out))
@@ -20,6 +21,7 @@ monitor() {
     total_bytes_out="$(($nb_out-$cb_out))"
     kilo_bytes_out="$(($total_bytes_out/1000))"
     mon_out=$(printf %.3f "$total_bytes_out"e-3)
+    mon_kb_out=$(printf %.3f "$kilo_bytes_out"e-3)
 
     #incoming traffic
     new_bytes_in=$(netstat -ib | grep -e "$1" -m 1 | awk '{print $7}')
@@ -27,18 +29,24 @@ monitor() {
     total_bytes_in="$(($nb_in-$cb_in))"
     kilo_bytes_in="$(($total_bytes_in/1000))"
     mon_in=$(printf %.3f "$total_bytes_in"e-3)
+    mon_kb_in=$(printf %.3f "$kilo_bytes_in"e-3)
 
-    overwrite "B OUT:" $mon_out "B IN:" $mon_in
+    overwrite "B OUT:" $mon_out " KB OUT: $mon_kb_out  || B IN:" $mon_in " KB IN: $mon_kb_in"
 
     #traffic limits in the arguments
     limit_out=$2
     limit_in=$3
+    savecheck=$4
     #Disable the hardware when the limit is reached
     if (( $limit_out > 0 && $limit_in > 0 )); then 
         if (( $kilo_bytes_out > $limit_out || $kilo_bytes_in > $limit_in )); then
             echo "Limit traffic reached. hardware $1 disabled. enable it again with -d flag"
             echo "Usage: OUT: $mon_out B - IN: $mon_in B"
-            ifconfig $1 down 
+            if $savecheck; then
+                hardware_disconnect
+            else 
+                ifconfig $1 down 
+            fi
             break
         fi
         #break
@@ -46,7 +54,11 @@ monitor() {
         if (( $kilo_bytes_out > $limit_out )); then
             echo "Limit traffic reached. hardware $1 disabled. enable it again with -d flag"
             echo "Usage: OUT $mon_out B - IN: $mon_in B"
-            ifconfig $1 down 
+            if $savecheck; then
+                hardware_disconnect
+            else 
+                ifconfig $1 down 
+            fi
             break
         fi
         #break
@@ -54,7 +66,11 @@ monitor() {
         if (( $kilo_bytes_in > $limit_in )); then 
             echo "Limit incoming traffic reached. hardware $1 disabled. enable it again with -d flag"
             echo "Usage: $mon_out B - IN: $mon_in B"
-            ifconfig $1 down 
+            if $savecheck; then
+                hardware_disconnect
+            else 
+                ifconfig $1 down 
+            fi
             break
         fi
         #break

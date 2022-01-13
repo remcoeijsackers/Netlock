@@ -3,15 +3,17 @@
 # [Remco Eijsackers] Netlock
 #          Monitor traffic and disable hardware when a treshhold is reached.
 # ------------------------------------------------------------------
-VERSION=0.1
+VERSION=0.1.1
 # --- Includes          --------------------------------------------
 source netlock/src/info.sh
 source netlock/src/util.sh
 source netlock/src/hwblock.sh
 source netlock/src/config.sh
 source netlock/src/monitor.sh
+source netlock/src/checks.sh
 # --- Option processing --------------------------------------------
 if [ $# == 0 ] ; then
+    check_tools_availability
     USAGE
     exit 1;
 fi
@@ -56,12 +58,31 @@ while getopts "vhtndsm:c:" optname
         exit 0;
         ;;
       "m")
-        HEADER $2
-        monitor $2 $3 $4
+        if  check_available_interfaces $2; then
+          if [ $# -eq 5 ] && [ $5 == "safe" ];
+            then
+              HEADER $2 "Safe -- disable all network interfaces on Threshold"
+              monitor $2 $3 $4 true
+          elif [ $# -eq 4 ];
+            then
+              HEADER $2 "Threshold -- disable the network interface on Threshold"
+              monitor $2 $3 $4 false
+          elif [ $# -eq 2 ];
+            then 
+              HEADER  $2 "Monitor only"
+              monitor $2 0 0 false
+          fi
+        fi
         exit 0;
         ;;
       "c")
-        monitorclean $OPTARG $OPTARG
+        if  check_available_interfaces $2; then
+          monitorclean $OPTARG $OPTARG
+        fi
+        exit 0;
+      ;;
+      "u")
+        uninstall_netlock
         exit 0;
       ;;
       *)
